@@ -92,11 +92,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 </div>
                 <div class="mb-3">
                     <label class="fw-semibold">Email Address:</label>
-                    <input type="email" name="email" class="form-control fst-italic" placeholder="...@mail.com" required>
+                    <input type="email" name="email" class="form-control fst-italic" placeholder="example@mail.com" required>
                 </div>
                 <div class="mb-3">
                     <label class="fw-semibold">Phone Number:</label>
-                    <input type="tel" name="phone" class="form-control" required pattern="[0-9]{7,15}" title="Enter 7-15 digits">
+                    <input type="tel" name="phone" class="form-control fst-italic" required pattern="[0-9]{7,15}" title="Enter 7-15 digits" placeholder="09xxxxxxxxx" required>
                 </div>
                 <div class="mb-3">
                     <label class="fw-semibold">Create Password:</label>
@@ -110,7 +110,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 <div class="mb-3">
                     <label class="fw-semibold">Confirm Password:</label>
                     <div class="input-group">
-                        <input type="password" name="confirm_password" id="confirm_password" class="form-control" required minlength="8">
+                        <input type="password" name="confirm_password" id="confirm_password" class="form-control fst-italic" required minlength="8" placeholder="Re-enter your password">
                         <span class="input-group-text" onclick="togglePassword('confirm_password', this)" style="cursor:pointer;">
                             <i class="bi bi-eye"></i>
                         </span>

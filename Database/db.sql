@@ -1,12 +1,14 @@
 -- Users Table
-CREATE TABLE IF NOT EXISTS users (
+CREATE TABLE users (
     user_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    first_name VARCHAR(100) NOT NULL,
-    last_name VARCHAR(100) NOT NULL,
-    email VARCHAR(150) UNIQUE NOT NULL,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    phone VARCHAR(20) NOT NULL,
     password VARCHAR(255) NOT NULL,
-    role ENUM('sender','driver') NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    role ENUM('sender', 'driver') NOT NULL DEFAULT 'sender',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
 -- Admins Table
@@ -23,7 +25,7 @@ CREATE TABLE IF NOT EXISTS admins (
 -- Delivery Requests Table
 CREATE TABLE IF NOT EXISTS delivery_requests (
     request_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    sender_id INT UNSIGNED NOT NULL,
+    user_id INT UNSIGNED NOT NULL,
     driver_id INT UNSIGNED DEFAULT NULL,
     pickup_location VARCHAR(255) NOT NULL,
     delivery_location VARCHAR(255) NOT NULL,
@@ -31,10 +33,10 @@ CREATE TABLE IF NOT EXISTS delivery_requests (
     weight DECIMAL(10,2) NOT NULL,
     is_fragile TINYINT(1) DEFAULT 0,
     preferred_time DATETIME NOT NULL,
-    delivery_mode ENUM('bike','motorbike') NOT NULL,
+    delivery_mode ENUM('bike','motorbike','car') NOT NULL,
     status ENUM('pending','accepted','in_transit','delivered','cancelled') DEFAULT 'pending',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (sender_id) REFERENCES users(user_id)
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
         ON DELETE CASCADE
         ON UPDATE CASCADE,
     FOREIGN KEY (driver_id) REFERENCES users(user_id)

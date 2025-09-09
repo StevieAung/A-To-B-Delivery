@@ -27,16 +27,8 @@ unset($_SESSION['alert']);
     <?php include './includes/head_tags.php'; ?>
     <style>
         * { font-family: "Roboto Mono", monospace; }
-
-        /* Card Hover Effect */
-        .card-link .card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .card-link:hover .card {
-            transform: translateY(-5px);
-            box-shadow: 0 1rem 2rem rgba(0,0,0,0.2);
-            background-color: #e9fbe9;
-        }
+        .card-link .card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .card-link:hover .card { transform: translateY(-5px); box-shadow: 0 1rem 2rem rgba(0,0,0,0.2); background-color: #e9fbe9; }
         .card-link { cursor: pointer; text-decoration: none; color: inherit; }
     </style>
 </head>
@@ -49,12 +41,17 @@ unset($_SESSION['alert']);
         <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item"><a class="nav-link active text-success px-3 fw-bold" href="home.php">Home</a></li>
-                <li class="nav-item"><a class="nav-link px-3 fw-bold" href="#">Delivery</a></li>
+                <li class="nav-item"><a class="nav-link px-3 fw-bold text-success" href="DeliveryFeatures/view_deliveries.php">Delivery</a></li>
                 <li class="nav-item"><a class="nav-link px-3 fw-bold" href="#">Pricing</a></li>
+                <li class="nav-item"><a class="nav-link px-3 fw-bold" href="#">About Us</a></li>
+                <li class="nav-item"><a class="nav-link px-3 fw-bold" href="#">Contact</a></li>
             </ul>
         </div>
         <div class="d-flex align-items-center">
-            <img src="profile.jpg" alt="Profile" class="rounded-circle me-2" width="35" height="35">
+            <span class="bg-success text-white rounded-circle d-inline-flex justify-content-center align-items-center" 
+                style="width: 35px; height: 35px;">
+                <i class="bi bi-person"></i>
+            </span>
             <span class="fw-semibold px-3">
                 <?php echo $_SESSION['user_firstname'] ?? "Guest"; ?>
             </span>
@@ -87,7 +84,7 @@ unset($_SESSION['alert']);
             <p class="lead mt-3">Send your packages anywhere, anytime with trusted drivers.</p>
             <?php if(isset($_SESSION['user_id'])): ?>
                 <?php if($_SESSION['user_type'] === 'sender'): ?>
-                    <a href="./Delivery Features/create_delivery.php" class="btn btn-success btn-lg mt-3 me-2">Send a Package</a>
+                    <a href="DeliveryFeatures/create_delivery.php" class="btn btn-success btn-lg mt-3 me-2">Send a Package</a>
                 <?php endif; ?>
                 <?php if($_SESSION['user_type'] === 'driver'): ?>
                     <a href="driver_dashboard.php" class="btn btn-outline-success btn-lg mt-3 me-2">Go to Dashboard</a>
@@ -116,7 +113,7 @@ unset($_SESSION['alert']);
             </a>
         </div>
         <div class="col-md-4">
-            <a href="./Delivery Features/create_delivery.php" class="card-link text-decoration-none">
+            <a href="DeliveryFeatures/create_delivery.php" class="card-link text-decoration-none">
                 <div class="card text-center h-100 shadow">
                     <div class="card-body">
                         <i class="bi bi-box-seam display-4 text-success mb-3"></i>
@@ -127,7 +124,7 @@ unset($_SESSION['alert']);
             </a>
         </div>
         <div class="col-md-4">
-            <a href="./Delivery Features/track_delivery.php" class="card-link text-decoration-none">
+            <a href="DeliveryFeatures/track_delivery.php" class="card-link text-decoration-none">
                 <div class="card text-center h-100 shadow">
                     <div class="card-body">
                         <i class="bi bi-bicycle display-4 text-success mb-3"></i>
@@ -147,7 +144,6 @@ unset($_SESSION['alert']);
     </div>
 </footer>
 
-<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
