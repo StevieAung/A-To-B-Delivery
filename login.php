@@ -23,17 +23,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             // Set session variables
             $_SESSION['user_id'] = $user_id;
             $_SESSION['user_firstname'] = $first_name;
-            $_SESSION['user_type'] = $role;
+            $_SESSION['role'] = $role;
 
             // Determine redirect page
-            $redirect = ($role === 'driver') ? 'driver_dashboard.php' : 'home.php';
+            $redirect = ($role === 'driver') ? './DriverFeatures/driver_dashboard.php' : 'home.php';
 
             $alert = "<div class='alert alert-success mt-3 text-center d-flex flex-column align-items-center'>
                         <strong>Login Successful!</strong>
                         <div class='spinner-border text-success mt-2' role='status'><span class='visually-hidden'>Loading...</span></div>
                         <small class='mt-2'>Redirecting...</small>
                       </div>
-                      <script>setTimeout(function(){ window.location.href='$redirect'; }, 2000);</script>";
+                      <script>setTimeout(function(){ window.location.href='$redirect'; }, 1000);</script>";
         } else {
             $alert = "<div class='alert alert-danger mt-3 text-center'>Invalid password.</div>";
         }

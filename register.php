@@ -43,14 +43,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
             if ($stmt->execute()) {
                 // Determine redirect
-                $redirect_url = ($role === 'driver') ? 'driver_setup.php' : 'login.php';
+                $_SESSION['user_id'] = $conn->insert_id; // get last inserted user ID
+                $_SESSION['user_firstname'] = $first_name;
+                $_SESSION['role'] = $role;
 
-                $alert = "<div class='alert alert-success mt-3 text-center d-flex flex-column align-items-center'>
-                            <strong>Registration Successful!</strong>
-                            <div class='spinner-border text-success mt-2' role='status'><span class='visually-hidden'>Loading...</span></div>
-                            <small class='mt-2'>Redirecting...</small>
-                          </div>
-                          <script>setTimeout(function(){ window.location.href='$redirect_url'; }, 2000);</script>";
+                // Redirect based on role
+                if ($role === 'driver') {
+                    header("Location: ./DriverFeatures/driver_setup.php");
+                    exit();
+                } else {
+                header("Location: login.php");
+                exit();
+            }
             } else {
                 $alert = "<div class='alert alert-danger mt-3 text-center'>Error: " . $stmt->error . "</div>";
             }

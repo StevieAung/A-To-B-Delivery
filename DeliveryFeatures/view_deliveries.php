@@ -1,7 +1,7 @@
 <?php
 session_start();
 include '../Database/db.php';
-if (!isset($_SESSION['user_id']) || $_SESSION['user_type'] !== 'sender') {
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'sender') {
     header("Location: ../login.php");
     exit();
 }

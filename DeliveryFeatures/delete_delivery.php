@@ -1,7 +1,7 @@
 <?php
 session_start();
 include '../Database/db.php';
-if (!isset($_SESSION['user_id']) || $_SESSION['user_type'] !== 'sender') {
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'sender') {
     header("Location: ../login.php");
     exit();
 }
@@ -29,7 +29,7 @@ if($stmt->execute()){
     #spinner-overlay .spinner-border{width:4rem;height:4rem;color:#198754;}
     </style></head><body>
     <div id='spinner-overlay' class='d-flex'><div class='spinner-border'></div><div class='mt-3 text-success'>Redirecting...</div></div>
-    <script>setTimeout(()=>{window.location.href='view_deliveries.php';},2000);</script>
+    <script>setTimeout(()=>{window.location.href='view_deliveries.php';},1000);</script>
     </body></html>";
     exit();
 } else {

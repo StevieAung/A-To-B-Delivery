@@ -83,11 +83,11 @@ unset($_SESSION['alert']);
             <h1 class="display-5 fw-bold"><span class="text-success">Fast</span> & <span class="text-success">Reliable</span> A To B Delivery</h1>
             <p class="lead mt-3">Send your packages anywhere, anytime with trusted drivers.</p>
             <?php if(isset($_SESSION['user_id'])): ?>
-                <?php if($_SESSION['user_type'] === 'sender'): ?>
-                    <a href="DeliveryFeatures/create_delivery.php" class="btn btn-success btn-lg mt-3 me-2">Send a Package</a>
+                <?php if($_SESSION['role'] === 'sender'): ?>
+                    <a href="./DeliveryFeatures/create_delivery.php" class="btn btn-success btn-lg mt-3 me-2">Send a Package</a>
                 <?php endif; ?>
-                <?php if($_SESSION['user_type'] === 'driver'): ?>
-                    <a href="driver_dashboard.php" class="btn btn-outline-success btn-lg mt-3 me-2">Go to Dashboard</a>
+                <?php if($_SESSION['role'] === 'driver'): ?>
+                    <a href="./DriverFeatures/driver_dashboard.php" class="btn btn-outline-success btn-lg mt-3 me-2">Go to Dashboard</a>
                 <?php endif; ?>
             <?php else: ?>
                 <a href="register.php" class="btn btn-success btn-lg mt-3 me-2">Send a Package</a>
