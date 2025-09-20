@@ -49,12 +49,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
                 // Redirect based on role
                 if ($role === 'driver') {
-                    header("Location: ./DriverFeatures/driver_setup.php");
-                    exit();
+                    $redirect = 'driver_setup.php';
                 } else {
-                header("Location: login.php");
-                exit();
-            }
+                    $redirect = 'home.php';
+                }
+
+                $alert = "<div class='alert alert-success mt-3 text-center d-flex flex-column align-items-center'>
+                            <strong>Registration Successful!</strong>
+                            <div class='spinner-border text-success mt-2' role='status'><span class='visually-hidden'>Loading...</span></div>
+                            <small class='mt-2'>Redirecting...</small>
+                          </div>
+                          <script>setTimeout(function(){ window.location.href='$redirect'; }, 1000);</script>";
             } else {
                 $alert = "<div class='alert alert-danger mt-3 text-center'>Error: " . $stmt->error . "</div>";
             }
@@ -62,7 +67,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
         $check->close();
     }
-    $conn->close();
 }
 ?>
 <!doctype html>

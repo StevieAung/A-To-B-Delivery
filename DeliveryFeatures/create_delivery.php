@@ -124,8 +124,8 @@ body{min-height:100vh; display:flex; justify-content:center; align-items:center;
 </style>
 </head>
 <body class="d-flex flex-column min-vh-100 bg-success-subtle">
-<form method="POST">
-    <div class="form-container">
+
+<div class="form-container">
     <button class="back-button" onclick="window.location.href='../home.php'">
         <i class="fas fa-arrow-left"></i> Back to Home
     </button>
@@ -134,6 +134,7 @@ body{min-height:100vh; display:flex; justify-content:center; align-items:center;
     </button>
     <h2 class="text-center text-success mb-4 fw-semibold">Create Delivery</h2>
     <?= $alert ?>
+<form method="POST">
     <div class="row">
         <div class="col-md-8">
             <div class="location-inputs">
@@ -191,8 +192,8 @@ body{min-height:100vh; display:flex; justify-content:center; align-items:center;
             </form>
         </div>
     </div>
-    </div>
 </form>
+</div>
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
     <script>

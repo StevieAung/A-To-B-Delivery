@@ -11,18 +11,28 @@ CREATE TABLE users (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
--- Drivers Additional Info Table (Profile, License, Vehicle)
-CREATE TABLE IF NOT EXISTS drivers (
-    driver_id INT UNSIGNED PRIMARY KEY,
-    license_number VARCHAR(100) NOT NULL UNIQUE,
-    vehicle_type ENUM('bike','motorbike','car') NOT NULL,
-    vehicle_plate VARCHAR(50) NOT NULL,
-    is_verified TINYINT(1) DEFAULT 0,
+CREATE TABLE driver_profiles (
+    driver_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id INT UNSIGNED NOT NULL,
+    vehicle_type ENUM('Bike', 'Motorbike', 'Car') NOT NULL,
+    vehicle_number VARCHAR(50) NOT NULL,
+    license_number VARCHAR(100) NOT NULL,
+    experience_years ENUM('None', 'Less than 1 year', 'Above 1 year') NOT NULL DEFAULT 'None',
+    profile_photo VARCHAR(255) DEFAULT NULL,
+    license_photo VARCHAR(255) DEFAULT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (driver_id) REFERENCES users(user_id)
-        ON DELETE CASCADE
-        ON UPDATE CASCADE
-) ENGINE=InnoDB;
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+-- Update location
+CREATE TABLE driver_locations (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    driver_id INT UNSIGNED NOT NULL,
+    latitude DECIMAL(10,7) NOT NULL,
+    longitude DECIMAL(10,7) NOT NULL,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (driver_id) REFERENCES driver_profiles(driver_id) ON DELETE CASCADE
+);
 
 -- Delivery Requests Table
 CREATE TABLE IF NOT EXISTS delivery_requests (
@@ -52,6 +62,7 @@ CREATE TABLE IF NOT EXISTS delivery_requests (
     INDEX (user_id),
     INDEX (driver_id)
 ) ENGINE=InnoDB;
+
 
 -- Delivery Tracking Table (status history & location updates)
 CREATE TABLE IF NOT EXISTS delivery_tracking (
