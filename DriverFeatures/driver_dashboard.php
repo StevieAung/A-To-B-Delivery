@@ -14,7 +14,10 @@ $user_id = $_SESSION['user_id'];
 $first_name = $_SESSION['user_firstname'] ?? 'Driver';
 
 // Fetch driver profile
-$stmt = $conn->prepare("SELECT vehicle_type, vehicle_number, license_number, experience_years, profile_photo FROM driver_profiles WHERE user_id = ?");
+// Use the correct table name 'driver_profiles' and join with users table
+$stmt = $conn->prepare("SELECT d.vehicle_type, d.vehicle_number, d.license_number, d.profile_photo
+                         FROM driver_profiles d
+                         WHERE d.user_id = ?");
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -58,19 +61,22 @@ $conn->close();
                 <div class="card-body">
                     <?php if($driver): ?>
                         <div class="text-center mb-3">
-                            <?php if($driver['profile_photo'] && file_exists("uploads/drivers/".$driver['profile_photo'])): ?>
-                                <img src="uploads/drivers/<?php echo $driver['profile_photo']; ?>" class="rounded-circle" width="120">
+                            <?php if($driver['profile_photo'] && file_exists("../uploads/drivers/".$driver['profile_photo'])): ?>
+                                <img src="../uploads/drivers/<?php echo $driver['profile_photo']; ?>"
+                                     alt="Profile Photo"
+                                     class="rounded-circle"
+                                     width="100" height="100">
                             <?php else: ?>
-                                <div class="bg-secondary rounded-circle text-white d-flex align-items-center justify-content-center" style="width:120px;height:120px;">
-                                    <i class="bi bi-person-fill" style="font-size: 4rem;"></i>
+                                <!-- Default icon if no profile picture -->
+                                <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center text-white" style="width:100px; height:100px;">
+                                    <i class="bi bi-person-fill" style="font-size: 2rem;"></i>
                                 </div>
                             <?php endif; ?>
                         </div>
                         <ul class="list-group list-group-flush">
                             <li class="list-group-item"><strong>Vehicle Type:</strong> <?= htmlspecialchars($driver['vehicle_type']) ?></li>
-                            <li class="list-group-item"><strong>Vehicle Number:</strong> <?= htmlspecialchars($driver['vehicle_number']) ?></li>
+                            <li class="list-group-item"><strong>Vehicle Plate:</strong> <?= htmlspecialchars($driver['vehicle_number']) ?></li>
                             <li class="list-group-item"><strong>License Number:</strong> <?= htmlspecialchars($driver['license_number']) ?></li>
-                            <li class="list-group-item"><strong>Experience:</strong> <?= htmlspecialchars($driver['experience_years']) ?></li>
                         </ul>
                     <?php else: ?>
                         <div class="alert alert-warning">No profile found. Complete setup <a href="driver_setup.php">here</a>.</div>
