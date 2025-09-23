@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($result->num_rows === 1) {
         $admin = $result->fetch_assoc();
-        if (password_verify($password, $admin['password'])) {
+        if (password_verify($password, $admin['password_hash'])) {
             $_SESSION['admin_id'] = $admin['admin_id'];
             $_SESSION['admin_name'] = $admin['first_name'];
             $_SESSION['admin_role'] = $admin['role'];
@@ -54,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <input type="email" name="email" class="form-control" required />
                     </div>
                     <div class="mb-3">
-                        <label for="password" class="form-label fw-semibold">Create Password:</label>
+                        <label for="password" class="form-label fw-semibold">Enter Password:</label>
                         <div class="input-group">
                             <input type="password" name="password" id="password" class="form-control" required minlength="8">
                             <span class="input-group-text" onclick="togglePassword('password', this)" style="cursor:pointer;">

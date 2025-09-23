@@ -17,7 +17,7 @@ $role = "super_admin";
 $password_hashed = password_hash($password_plain, PASSWORD_DEFAULT);
 
 // Insert super admin
-$sql = "INSERT INTO admins (first_name, last_name, email, password, role) 
+$sql = "INSERT INTO admins (first_name, last_name, email, password_hash, role) 
         VALUES (?, ?, ?, ?, ?)";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("sssss", $first_name, $last_name, $email, $password_hashed, $role);

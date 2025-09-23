@@ -1,9 +1,8 @@
 <?php
+session_start();
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
-// Include database connection
-session_start();
-include './Database/db.php';
+include '../Database/db.php';
 
 if (!isset($_SESSION['admin_role']) || $_SESSION['admin_role'] !== 'super_admin') {
     die("Access denied. Only super admins can register new admins.");
@@ -16,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
     $role = $_POST['role'];
 
-    $stmt = $conn->prepare("INSERT INTO admins (first_name, last_name, email, password, role) VALUES (?, ?, ?, ?, ?)");
+    $stmt = $conn->prepare("INSERT INTO admins (first_name, last_name, email, password_hash, role) VALUES (?, ?, ?, ?, ?)");
     $stmt->bind_param("sssss", $first_name, $last_name, $email, $password, $role);
 
     if ($stmt->execute()) {
@@ -31,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="en">
 <head>
     <title>Admin Register</title>
-    <?php include 'head_tags.php'; ?>
+    <?php include '../includes/head_tags.php'; ?>
 </head>
 <body class="d-flex flex-column min-vh-100 bg-primary-subtle">
     <div class="container form-container d-flex justify-content-center align-items-center mt-5">
@@ -40,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <!-- Left Column: Image -->
             <div class="col-md-6 form-image d-none d-md-block align-content-center">
                 <img
-                    src="./Assets/adminPic.jpeg"
+                    src="../Assets/images/admin_pic.png"
                     alt="Logo Image"
                     class="img-fluid"
                 /> 
@@ -83,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
 
                 <button type="submit" class="btn btn-primary w-100">Register Admin</button>
-                <p class="text-center mt-3">Already have an account? <a href="login.php">Login</a>.</p>
+                <p class="text-center mt-3">Already have an account? <a href="../Dashboard/admin_login.php">Login</a>.</p>
             </form>
 
             <?php if (!empty($alert)) echo $alert; ?>
