@@ -30,17 +30,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $redirect = 'home.php';
             } elseif ($role === 'driver') {
                 // Check if driver_id exists in drivers table
-                $driverCheck = $conn->prepare("SELECT driver_id FROM driver_profiles WHERE driver_id = ?");
+                $driverCheck = $conn->prepare("SELECT driver_id FROM driver_profiles WHERE user_id = ?");
                 $driverCheck->bind_param("i", $user_id);
                 $driverCheck->execute();
                 $driverCheck->store_result();
 
                 if ($driverCheck->num_rows == 0) {
                     // No driver_id, redirect to driver_setup.php
-                    $redirect = 'driver_setup.php';
+                    $redirect = './Driver/driver_setup.php';
                 } else {
                     // Driver_id exists, redirect to driver_dashboard.php
-                    $redirect = './DriverFeatures/driver_dashboard.php';
+                    $redirect = './Driver/driver_dashboard.php';
                 }
                 $driverCheck->close();
             } else {
@@ -112,11 +112,6 @@ function togglePassword(fieldId, spanElement){
     else { field.type="password"; icon.classList.replace("bi-eye-slash","bi-eye"); }
 }
 </script>
- ```php
- <?php
- // filepath: /Applications/XAMPP/xamppfiles/htdocs/Delivery/whoami.php
- echo exec('whoami');
- ?>
- ```
+ 
 </body>
 </html>

@@ -1,149 +1,269 @@
 <?php
+/**
+ * home.php (Bilingual + Themed)
+ * --------------------------------------------------------
+ * A To B Delivery – Home Page
+ *
+ * Purpose:
+ *  • Present main introduction, delivery features & process
+ *  • Match the bilingual Aesthetic of Services page
+ *
+ * Author: Sai Htet Aung Hlaing
+ * Updated: 2025-10-06
+ * --------------------------------------------------------
+ */
+
 session_start();
 include './Database/db.php';
 
-// Fetch first name if not already in session
+// Fetch user first name
 if (isset($_SESSION['user_id']) && !isset($_SESSION['user_firstname'])) {
     $user_id = $_SESSION['user_id'];
     $stmt = $conn->prepare("SELECT first_name FROM users WHERE user_id = ?");
     $stmt->bind_param("i", $user_id);
     $stmt->execute();
     $stmt->bind_result($first_name);
-    if ($stmt->fetch()) {
-        $_SESSION['user_firstname'] = $first_name;
-    }
+    if ($stmt->fetch()) $_SESSION['user_firstname'] = $first_name;
     $stmt->close();
 }
 
-// Alert message for redirection (optional)
 $alert = $_SESSION['alert'] ?? '';
 unset($_SESSION['alert']);
 ?>
+
 <!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Home - A To B Delivery</title>
-    <?php include './includes/head_tags.php'; ?>
-    <style>
-        * { font-family: "Roboto Mono", monospace; }
-        .card-link .card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
-        .card-link:hover .card { transform: translateY(-5px); box-shadow: 0 1rem 2rem rgba(0,0,0,0.2); background-color: #e9fbe9; }
-        .card-link { cursor: pointer; text-decoration: none; color: inherit; }
-    </style>
+<meta charset="UTF-8">
+<title>Home - A To B Delivery</title>
+<?php include './includes/head_tags.php'; ?>
+<style>
+* { font-family: "Roboto Mono", monospace; }
+body { 
+  background-color: var(--bs-success-bg-subtle);
+  padding-top: 100px; /* ⬆️ Increased to push all content below navbar */
+}
+
+/* Myanmar text style */
+.mm-text {
+  font-family: "Pyidaungsu", sans-serif;
+  font-size: 0.95rem;
+  color: #555;
+  line-height: 1.6;
+}
+
+/* Hero Section */
+.hero {
+  padding-top: 4rem;  /* reduced slightly; body padding handles main offset */
+  padding-bottom: 4rem;
+  text-align: center;
+}
+.hero .card {
+  border: none;
+  border-radius: 20px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+  background-color: #fff;
+  width: 90%;
+  max-width: 1200px;
+  margin: auto;
+}
+.hero .card-body {
+  padding: 3rem 2rem;
+}
+
+/* Sender Quick Access */
+.sender-section {
+  background-color: var(--bs-success-bg-subtle);
+  padding: 4rem 0; /* ⬆️ Increased top & bottom padding */
+}
+
+/* Fade Animation */
+.fade-in { opacity: 0; transform: translateY(25px); transition: all 0.8s ease; }
+.fade-in.visible { opacity: 1; transform: translateY(0); }
+
+/* Card hover effect */
+.card-link .card {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.card-link:hover .card {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+/* Remove underline globally */
+a, a:hover, a:focus { text-decoration: none !important; }
+
+/* Section Titles */
+h2.section-title {
+  text-align: center;
+  font-weight: 700;
+  color: #198754;
+  margin-top: 2rem; /* ⬆️ Added extra breathing room above titles */
+  margin-bottom: 2rem;
+}
+
+/* --- How It Works Card Hover Effects --- */
+.how-card {
+  border: none;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.how-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+}
+
+/* Add breathing room before footer */
+section.container:last-of-type {
+  margin-bottom: 5rem; /* slightly more footer space */
+}
+</style>
+
 </head>
-<body class="d-flex flex-column min-vh-100 bg-success-subtle">
 
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-white bg-white shadow-sm">
-    <div class="container-fluid d-flex justify-content-between align-items-center">
-        <a class="navbar-brand ps-3 fw-bolder" href="home.php"><h3 class="text-success fw-bold">A TO B DELIVERY</h3></a>
-        <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
-            <ul class="navbar-nav">
-                <li class="nav-item"><a class="nav-link active text-success px-3 fw-bold" href="home.php">Home</a></li>
-                <li class="nav-item"><a class="nav-link px-3 fw-bold text-success" href="DeliveryFeatures/view_deliveries.php">Delivery</a></li>
-                <li class="nav-item"><a class="nav-link px-3 fw-bold" href="#">Pricing</a></li>
-                <li class="nav-item"><a class="nav-link px-3 fw-bold" href="#">About Us</a></li>
-                <li class="nav-item"><a class="nav-link px-3 fw-bold" href="#">Contact</a></li>
-            </ul>
-        </div>
-        <div class="d-flex align-items-center">
-            <span class="bg-success text-white rounded-circle d-inline-flex justify-content-center align-items-center" 
-                style="width: 35px; height: 35px;">
-                <i class="bi bi-person"></i>
-            </span>
-            <span class="fw-semibold px-3">
-                <?php echo $_SESSION['user_firstname'] ?? "Guest"; ?>
-            </span>
-            <?php if (isset($_SESSION['user_id'])): ?>
-                <form method="POST" action="logout.php" class="d-inline">
-                    <button type="submit" class="btn btn-success fw-semibold ms-2">Logout</button>
-                </form>
-            <?php else: ?>
-                <a href="login.php" class="btn btn-success fw-bold ms-2">Login</a>
-            <?php endif; ?>
-        </div>
-    </div>
-</nav>
+<body class="d-flex flex-column min-vh-100">
+<?php include './includes/navbar.php'; ?>
 
-<!-- Display Alert -->
+<!-- Alert Message -->
 <?php if($alert): ?>
-    <div class="container mt-3">
-        <?php echo $alert; ?>
-    </div>
+<div class="container mt-4">
+  <?= $alert ?>
+</div>
 <?php endif; ?>
 
-<!-- Hero Section -->
-<section class="hero text-center my-5">
-    <div class="container bg-white p-5 rounded-3 shadow">
-        <div class="col">
-            <img src="./Assets/images/logo.png" alt="logo" class="img-fluid mb-4" style="max-width: 200px;">
-        </div>
-        <div class="col">
-            <h1 class="display-5 fw-bold"><span class="text-success">Fast</span> & <span class="text-success">Reliable</span> A To B Delivery</h1>
-            <p class="lead mt-3">Send your packages anywhere, anytime with trusted drivers.</p>
-            <?php if(isset($_SESSION['user_id'])): ?>
-                <?php if($_SESSION['role'] === 'sender'): ?>
-                    <a href="./DeliveryFeatures/create_delivery.php" class="btn btn-success btn-lg mt-3 me-2">Send a Package</a>
-                <?php endif; ?>
-                <?php if($_SESSION['role'] === 'driver'): ?>
-                    <a href="./DriverFeatures/driver_dashboard.php" class="btn btn-outline-success btn-lg mt-3 me-2">Go to Dashboard</a>
-                <?php endif; ?>
-            <?php else: ?>
-                <a href="register.php" class="btn btn-success btn-lg mt-3 me-2">Send a Package</a>
-                <a href="register.php" class="btn btn-outline-success btn-lg mt-3">Become a Driver</a>
-            <?php endif; ?>
-        </div>
+<!-- =======================
+     HERO SECTION
+     ======================= -->
+<section class="hero fade-in">
+  <div class="card">
+    <div class="card-body">
+      <img src="./Assets/images/logo.png" alt="logo" class="img-fluid mb-4" style="max-width: 150px;">
+      <h1 class="fw-bold text-success mb-3">Fast & Reliable Delivery</h1>
+      <p class="lead text-muted mb-1">Your trusted pickup-to-drop solution — anytime, anywhere.</p>
+      <p class="mm-text">အချိန်မရွေး နေရာမရွေး ယုံကြည်စိတ်ချရသော ပစ္စည်းပို့ဝန်ဆောင်မှု။</p>
+
+      <?php if(isset($_SESSION['user_id'])): ?>
+        <?php if($_SESSION['role'] === 'sender'): ?>
+          <a href="./Delivery/create_delivery.php" class="btn btn-success btn-lg mt-3 me-2">
+            <i class="bi bi-send me-1"></i> Send a Package
+          </a>
+        <?php elseif($_SESSION['role'] === 'driver'): ?>
+          <a href="./Driver/driver_dashboard.php" class="btn btn-outline-success btn-lg mt-3 me-2">
+            <i class="bi bi-speedometer me-1"></i> Go to Dashboard
+          </a>
+        <?php endif; ?>
+      <?php else: ?>
+        <a href="register.php" class="btn btn-success btn-lg mt-3 me-2">Send a Package</a>
+        <a href="register.php" class="btn btn-outline-success btn-lg mt-3">Become a Driver</a>
+      <?php endif; ?>
     </div>
+  </div>
 </section>
 
-<!-- How It Works Section -->
-<section class="container my-5 steps">
-    <h2 class="text-center fw-bold mb-4">How It Works</h2>
-    <div class="row g-4">
-        <div class="col-md-4">
-            <a href="register.php" class="card-link text-decoration-none">
-                <div class="card text-center h-100 shadow">
-                    <div class="card-body">
-                        <i class="bi bi-person-plus display-4 text-success mb-3"></i>
-                        <h5 class="card-title">1. Sign Up</h5>
-                        <p class="card-text">Create your account as a sender or driver to get started.</p>
-                    </div>
-                </div>
-            </a>
-        </div>
-        <div class="col-md-4">
-            <a href="DeliveryFeatures/create_delivery.php" class="card-link text-decoration-none">
-                <div class="card text-center h-100 shadow">
-                    <div class="card-body">
-                        <i class="bi bi-box-seam display-4 text-success mb-3"></i>
-                        <h5 class="card-title">2. Book Delivery</h5>
-                        <p class="card-text">Enter package details and choose your pickup & drop-off.</p>
-                    </div>
-                </div>
-            </a>
-        </div>
-        <div class="col-md-4">
-            <a href="DeliveryFeatures/track_delivery.php" class="card-link text-decoration-none">
-                <div class="card text-center h-100 shadow">
-                    <div class="card-body">
-                        <i class="bi bi-bicycle display-4 text-success mb-3"></i>
-                        <h5 class="card-title">3. Get it Delivered</h5>
-                        <p class="card-text">Track your package and get it delivered safely and quickly.</p>
-                    </div>
-                </div>
-            </a>
-        </div>
+<!-- =======================
+     QUICK ACCESS (Sender Only)
+     ======================= -->
+<?php if (isset($_SESSION['user_id']) && $_SESSION['role'] === 'sender'): ?>
+<section class="sender-section text-center fade-in">
+  <div class="container">
+    <h2 class="fw-bold text-success mb-4">Quick Access for You <br>
+      <span class="mm-text">သင့်အတွက် အလွယ်တကူ အသုံးပြုနိုင်ရန်</span>
+    </h2>
+    <div class="row g-4 justify-content-center">
+
+      <div class="col-md-5">
+        <a href="./Delivery/view_deliveries.php" class="card-link">
+          <div class="card h-100 p-4 bg-white">
+            <div class="card-body">
+              <i class="bi bi-truck text-success display-5 mb-3"></i>
+              <h4 class="fw-semibold">View Your Deliveries</h4>
+              <p class="text-muted mb-1">Check your active and past delivery requests.</p>
+              <p class="mm-text">သင်ပေးပို့ခဲ့သော ပစ္စည်းများနှင့် လက်ရှိပို့ဆောင်မှုများကို စစ်ဆေးနိုင်ပါသည်။</p>
+            </div>
+          </div>
+        </a>
+      </div>
+
+      <div class="col-md-5">
+        <a href="./Delivery/track_delivery.php" class="card-link">
+          <div class="card h-100 p-4 bg-white">
+            <div class="card-body">
+              <i class="bi bi-geo-alt text-success display-5 mb-3"></i>
+              <h4 class="fw-semibold">Track Your Delivery</h4>
+              <p class="text-muted mb-1">Enter your tracking ID to view real-time status.</p>
+              <p class="mm-text">ပစ္စည်း၏ လမ်းကြောင်းနှင့် တည်နေရာကို အချိန်နှင့်တစ်ပြေးညီ စောင့်ကြည့်နိုင်ပါသည်။</p>
+            </div>
+          </div>
+        </a>
+      </div>
+
     </div>
+  </div>
+</section>
+<?php endif; ?>
+
+<!-- =======================
+     HOW IT WORKS (with hover)
+     ======================= -->
+<section class="container fade-in">
+  <h2 class="section-title">How It Works <br><span class="mm-text">လုပ်ဆောင်ပုံ</span></h2>
+  <div class="row g-4">
+
+    <!-- Step 1 -->
+    <div class="col-md-4">
+      <div class="card how-card text-center h-100">
+        <div class="card-body py-4">
+          <i class="bi bi-person-plus display-4 text-success mb-3"></i>
+          <h5 class="fw-semibold">1. Sign Up</h5>
+          <p class="text-muted">Create your account as a sender or driver.</p>
+          <p class="mm-text">ပစ္စည်းပေးပို့သူ သို့မဟုတ် ပို့ဆောင်သူအဖြစ် အကောင့်ဖွင့်ပါ။</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="col-md-4">
+      <div class="card how-card text-center h-100">
+        <div class="card-body py-4">
+          <i class="bi bi-box-seam display-4 text-success mb-3"></i>
+          <h5 class="fw-semibold">2. Book Delivery</h5>
+          <p class="text-muted">Enter your package details and pickup/drop points.</p>
+          <p class="mm-text">ပစ္စည်းအချက်အလက်နှင့် Pickup / Drop လိပ်စာကို ထည့်ပါ။</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="col-md-4">
+      <div class="card how-card text-center h-100">
+        <div class="card-body py-4">
+          <i class="bi bi-bicycle display-4 text-success mb-3"></i>
+          <h5 class="fw-semibold">3. Get It Delivered</h5>
+          <p class="text-muted">Track your package and receive it safely.</p>
+          <p class="mm-text">ပစ္စည်းအောင်မြင်စွာ ရောက်ရှိရန်အထိ စောင့်ကြည့်ပါ။</p>
+        </div>
+      </div>
+    </div>
+    
+  </div>
 </section>
 
-<!-- Footer -->
-<footer class="footer bg-success text-light pt-5 mt-auto">
-    <div class="container text-center">
-        &copy; <?php echo date('Y'); ?> A To B Delivery | All Rights Reserved
-    </div>
-</footer>
+<!-- =======================
+     FOOTER
+     ======================= -->
+<?php include './includes/footer.php'; ?>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+const fadeEls=document.querySelectorAll('.fade-in');
+const show=()=>{const t=window.innerHeight*0.9;
+fadeEls.forEach(e=>{if(e.getBoundingClientRect().top<t)e.classList.add('visible');});};
+window.addEventListener('scroll',show);window.addEventListener('load',show);
+</script>
 </body>
 </html>

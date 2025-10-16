@@ -1,167 +1,261 @@
-🚲🛍️ Point A to B Delivery System
-📌 Overview
+# 🛵 A To B Delivery Service Website
+### PHP–MySQL | Bootstrap 5 | Leaflet.js
+**Developer:** Sai Htet Aung Hlaing  
+**Project Type:** Level 5 Diploma in Computing — Computing Project  
+**Supervisor:** Dr. Aye Aye, Strategy First International College, Mandalay  
 
-This project is a Point A to B Delivery Web System designed to make logistics simple and efficient.
-Users can request deliveries from one location (Point A) to another (Point B), and drivers can accept, update, and complete those requests.
+---
 
-The system supports multiple roles:
+## 📘 Project Overview
+The **A To B Delivery Service Website** is a PHP-based web application that connects **senders** and **drivers** for local point-to-point deliveries.  
+It automates delivery requests, tracking, and management through a responsive web platform using **Leaflet.js maps** for real-time delivery visualization.  
 
-Super Admin – full control of admins, drivers, and customers
+The system enables:  
+- Senders to request and track deliveries  
+- Drivers to accept, update, and complete jobs  
+- Admins to oversee operations and generate reports  
 
-Admin – manage deliveries, assign drivers, generate reports
+This project integrates **database-driven workflows**, **secure user management**, and **interactive mapping**, reflecting the principles of full-stack web development for logistics optimization.
 
-Driver – set up profile, view assigned deliveries, update status, share live location
+---
 
-Sender/User – create delivery requests, track progress in real-time
+## 🎯 Project Aim
+To develop a **scalable, secure, and interactive web application** that manages local deliveries efficiently and enhances transparency between senders, drivers, and administrators.
 
-The main goal is to provide a pickup-and-drop delivery platform with real-time tracking, secure authentication, and role-based management.
+---
 
-🚀 Tech Stack
+## 🧩 Key Objectives
+- Build a **modular PHP-MySQL** web system with responsive design.  
+- Integrate **role-based modules** for senders, drivers, and admins.  
+- Implement **map-based delivery tracking** using Leaflet.js and OpenStreetMap.  
+- Enable real-time delivery status updates.  
+- Provide **data analytics** and performance reporting tools for administrators.
 
-Frontend: PHP, Bootstrap, JavaScript (Vanilla + JSON handling)
+---
 
-Backend: PHP
+## ⚙️ System Features
 
-Database: MySQL
+### 👤 Sender Module
+- Register and log in securely  
+- Create and manage delivery requests  
+- Track current delivery on a **Leaflet-based live map**  
+- View completed deliveries and receipts  
+- Submit ratings and feedback  
 
-Maps & Routing: Integrated with geolocation & map APIs
+### 🛻 Driver Module
+- Register with vehicle and license details  
+- View and accept available deliveries  
+- Update delivery progress (picked up, in transit, delivered)  
+- Live location updates on the map  
+- View income and performance reports  
 
-Real-Time Features: Live location updates via JavaScript/JSON
+### 🧑‍💼 Admin Module
+- Manage all senders, drivers, and delivery records  
+- Assign deliveries and monitor statuses  
+- View system reports and analytics (charts)  
+- Manage pricing, regions, and settings  
+- Access super admin features for user management  
 
-✨ Features
+### 🔐 Security & Authentication
+- Secure user sessions with role-based access  
+- Password encryption using `password_hash()`  
+- Form validation and CSRF protection  
+- Input sanitization and restricted file uploads  
 
-✔️ Create, edit, and track delivery requests
-✔️ Real-time driver location updates
-✔️ Driver profile setup (vehicle, license, experience, photos)
-✔️ Role-based dashboards (Admin, Driver, Sender)
-✔️ Secure login & registration for users and admins
-✔️ Delivery management with status updates
+---
 
-📊 Future Improvements
+## 🧱 System Architecture
 
-🔹 Push notifications for delivery updates
-🔹 Improved analytics with data visualization (charts, trends)
-🔹 React front-end migration for scalability
-🔹 Stronger API integrations for maps & routing
+| Layer | Technologies | Description |
+|--------|---------------|-------------|
+| **Frontend** | HTML5, CSS3, JavaScript, Bootstrap 5 | Responsive UI framework |
+| **Map Integration** | Leaflet.js + OpenStreetMap | Interactive, API-free map visualization |
+| **Backend** | PHP 8+ (Procedural + Modular MVC) | Business logic and routing |
+| **Database** | MySQL 8 (InnoDB Engine) | Relational data storage |
+| **Server** | Apache (XAMPP / LAMP) | Localhost runtime environment |
 
-🏗️ Project Structure
-DELIVERY/
-│── .vscode/                 # VS Code settings
-│── Assets/
-│   └── images/              # Project images
-│
-│── Dashboard/               # Admin dashboard features
-│   ├── admin_login.php
-│   ├── admin_register.php
+---
+
+## 🗄️ Database Schema (Core Tables)
+
+| Table | Description |
+|--------|-------------|
+| `users` | Sender and driver user accounts |
+| `driver_profiles` | Driver documents and vehicle data |
+| `delivery_requests` | Main delivery order details |
+| `delivery_tracking` | Live tracking and delivery status |
+| `admins` | Admin and super admin records |
+| `payments` | Financial and transaction data |
+| `feedback` | Ratings and user feedback |
+
+---
+
+## 📁 Folder Structure (Current Version)
+```
+Delivery/
+├── Admin/
 │   ├── dashboard.php
-│   └── test.php
+│   ├── manage_users.php
+│   ├── manage_deliveries.php
+│   ├── reports.php
+│   ├── settings.php
+│   ├── includes/
+│   └── middleware/
 │
-│── Database/                # Database connection and schema
-│   ├── db.php
-│   └── db.sql
-│
-│── DeliveryFeatures/        # Delivery request features
-│   ├── create_delivery.php
-│   ├── delete_delivery.php
-│   ├── edit_delivery.php
-│   └── view_deliveries.php
-│
-│── DriverFeatures/          # Driver-related features
-│   ├── accept_delivery.php
+├── Driver/
 │   ├── driver_dashboard.php
-│   ├── update_delivery_status.php
-│   └── view_assigned_deliveries.php
+│   ├── available_deliveries.php
+│   ├── my_deliveries.php
+│   ├── update_tracking.php
+│   ├── earnings.php
 │
-│── includes/                # Common includes
-│   ├── footer_tags.php
-│   └── head_tags.php
+├── DeliveryFeatures/
+│   ├── create_delivery.php
+│   ├── view_deliveries.php
+│   ├── track_delivery.php
 │
-│── uploads/                 # File uploads (driver documents/photos)
+├── Database/
+│   ├── db.php
+│   ├── db.sql
+│
+├── includes/
+│   ├── navbar.php
+│   ├── footer.php
+│   ├── head_tags.php
+│
+├── api/
+│   ├── get_driver_location.php
+│
+├── uploads/
 │   └── drivers/
-│       ├── 1758364557_license.jpg
-│       └── 1758364557_profile.jpeg
 │
-│── create_super_admin.php   # Super admin setup
-│── driver_setup.php         # Driver profile setup
-│── geocode_proxy.php        # Proxy for geocoding
-│── home.php                 # Home/landing page
-│── login.php                # User login
-│── logout.php               # User logout
-│── register.php             # User registration
-│── style.css                # Global stylesheet
-│── update_location.php      # Driver location updater
-│── uploads.php              # Upload handler
-│── README.md                # Project documentation
+├── login.php
+├── register.php
+├── home.php
+├── about.php
+├── services.php
+├── logout.php
+└── README.md
+```
 
-⚙️ Setup Guide
+---
 
-Follow these steps to run the project locally using XAMPP:
+## 🧠 Software Development Methodology
+The project follows the **Agile Scrum** approach — iterative, feedback-driven, and sprint-based development.
 
-1️⃣ Install Requirements
+| Sprint | Focus | Deliverables |
+|--------|--------|--------------|
+| 1 | Database design & authentication | `users`, `driver_profiles`, `admins` |
+| 2 | Core sender & driver workflows | Delivery creation, acceptance, updates |
+| 3 | Admin dashboard | Reports, analytics, user management |
+| 4 | UI/UX improvement & Leaflet map | Map-based tracking, final testing |
 
-XAMPP
- (with Apache & MySQL)
+---
 
-Web browser (Chrome/Firefox recommended)
+## 🗺️ Leaflet Map Integration
 
-VS Code or any code editor
+**Libraries Used:**
+- [Leaflet.js](https://leafletjs.com/)
+- OpenStreetMap tiles (free, no API key required)
+- Optional: [Leaflet Routing Machine](https://www.liedman.net/leaflet-routing-machine/) for route visualization  
 
-2️⃣ Clone or Download Project
+**Example Setup:**
+```html
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
-Place the project folder inside your XAMPP htdocs directory:
-/Applications/XAMPP/htdocs/DELIVERY   (Mac)
-C:/xampp/htdocs/DELIVERY              (Windows)
+<div id="map" style="height: 400px;"></div>
 
-3️⃣ Database Setup
+<script>
+  var map = L.map('map').setView([21.9588, 96.0891], 13); // Default Mandalay
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(map);
+</script>
+```
 
-Start Apache and MySQL in XAMPP.
+---
 
-Open phpMyAdmin at http://localhost/phpmyadmin
-.
+## 📊 Reports & Analytics
+- Delivery Performance Report  
+- Driver Earnings Summary  
+- User Registration Trends  
+- Delivery Volume per Month  
+- Feedback Analysis  
 
-Create a new database (e.g., delivery_db).
+---
 
-Import the provided SQL file:
+## 🌍 Future Extensions
+- Progressive Web App (PWA) for mobile  
+- RESTful API for Android app integration  
+- Wallet system and QR-based payments  
+- Predictive analytics for delivery timing  
+- Multi-language interface (English/Myanmar)  
 
-Go to Import tab
+---
 
-Select Database/db.sql
+## 🚀 Installation Guide (Localhost Setup)
 
-Click Go
+1. **Extract** the folder to:  
+   ```
+   C:\xampp\htdocs\A2B-Delivery
+   ```
 
-4️⃣ Configure Database
-Edit the file Database/db.php and update database credentials if needed:
-<?php
-$host = "localhost";
-$user = "root";     // default XAMPP user
-$pass = "";         // default XAMPP password is empty
-$db   = "delivery_db";
+2. **Create database:**  
+   - Open phpMyAdmin  
+   - Create new DB: `a2b_delivery`  
+   - Import `/Database/db.sql`
 
-$conn = new mysqli($host, $user, $pass, $db);
+3. **Configure DB connection:**  
+   Open `/Database/db.php` and update if needed:  
+   ```php
+   $servername = "localhost";
+   $username = "root";
+   $password = "";
+   $dbname = "a2b_delivery";
+   ```
 
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-?>
+4. **Run project:**  
+   ```
+   http://localhost/A2B-Delivery/home.php
+   ```
 
-5️⃣ Run the Project
-Open your browser and go to:
-http://localhost/DELIVERY/home.php
+5. **Default admin credentials:**  
+   ```
+   Email: admin@example.com
+   Password: admin123
+   ```
 
-Register as a User (Sender) or Driver
-Admin can log in via Dashboard/admin_login.php
-Super Admin can be created via create_super_admin.php
+---
 
-📖 About Me
+## 🧪 Testing Checklist
+✅ Login & registration for all roles  
+✅ Create & accept delivery request  
+✅ Live map rendering via Leaflet  
+✅ Delivery status update flow  
+✅ Report and analytics display  
+✅ File uploads (driver license, profile photo)  
+✅ Secure logout and session expiry  
 
-I am an aspiring Software Engineer with practical experience in web development, databases, and real-time applications.
+---
 
-🎓 Level 5 Diploma in Computing – NCC Education
-💻 Skilled in PHP, MySQL, JavaScript, Bootstrap
-🌱 Currently learning React
-🔍 Interested in solving problems with tech
+## 📚 References
+- [Leaflet.js Official Docs](https://leafletjs.com/)  
+- [OpenStreetMap](https://www.openstreetmap.org/)  
+- [Bootstrap 5 Documentation](https://getbootstrap.com/)  
+- W3Schools — PHP & MySQL  
+- CISA (2021) — Web application security guidelines  
 
-🤝 Let’s Connect
+---
 
-📧 Email: stevieaung90@gmail.com
-📞 Phone: +959777395589
+## 🏁 Conclusion
+The **A To B Delivery Service Website** effectively demonstrates secure, scalable, and interactive web development principles.  
+By using **Leaflet.js** and **OpenStreetMap**, it delivers a modern, cost-free mapping feature suitable for local logistics startups and small-scale delivery providers.  
+
+This project aligns with NCC Computing standards, showcasing practical implementation of full-stack concepts, database management, and real-time system functionality.
+
+---
+
+## 📄 License
+This project is for academic and educational purposes only.  
+Redistribution or commercial use without permission is prohibited.

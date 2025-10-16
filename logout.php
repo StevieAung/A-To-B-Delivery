@@ -1,6 +1,19 @@
 <?php
 session_start();
 
+// Enforce POST and CSRF validation
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    header('Location: home.php');
+    exit;
+}
+
+$tokenValid = isset($_POST['csrf'], $_SESSION['csrf']) && hash_equals($_SESSION['csrf'], $_POST['csrf']);
+if (!$tokenValid) {
+    http_response_code(403);
+    echo 'Invalid CSRF token.';
+    exit;
+}
+
 // Unset all session variables
 $_SESSION = [];
 
@@ -16,7 +29,7 @@ if (ini_get("session.use_cookies")) {
     );
 }
 
-// Redirect to login or home page
+// Redirect to home page
 header("Location: home.php");
 exit;
 ?>

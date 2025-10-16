@@ -2,7 +2,6 @@
 session_start();
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
-
 include './Database/db.php';
 
 $alert = "";
@@ -49,7 +48,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
                 // Redirect based on role
                 if ($role === 'driver') {
-                    $redirect = 'driver_setup.php';
+                    $redirect = 'Driver/driver_setup.php';
                 } else {
                     $redirect = 'home.php';
                 }
