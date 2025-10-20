@@ -18,17 +18,25 @@ $__base = (strpos($__path, '/Delivery/') !== false || strpos($__path, '/Driver/'
 <meta name="keywords" content="delivery, logistics, Myanmar, courier, driver, tracking, A To B Delivery" />
 <meta name="author" content="Sai Htet Aung Hlaing" />
 
-<!-- ✅ FIXED CONTENT SECURITY POLICY -->
+<!-- ✅ FIXED CONTENT SECURITY POLICY (Leaflet + Bootstrap + OSRM) -->
 <meta http-equiv="Content-Security-Policy" content="
   default-src 'self' data: blob:;
-  connect-src 'self' http://localhost:* https://nominatim.openstreetmap.org https://*.tile.openstreetmap.org https://unpkg.com;
-  img-src 'self' data: blob: https://*.tile.openstreetmap.org https://unpkg.com;
+  connect-src 
+    'self'
+    http://localhost:* 
+    https://router.project-osrm.org 
+    https://nominatim.openstreetmap.org 
+    https://*.tile.openstreetmap.org 
+    https://unpkg.com 
+    https://cdn.jsdelivr.net 
+    https://cdnjs.cloudflare.com;
+  img-src 'self' data: blob: https://*.tile.openstreetmap.org https://unpkg.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com;
   font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net;
   script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com;
   style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com https://unpkg.com https://cdnjs.cloudflare.com;
-  frame-ancestors 'self';
   upgrade-insecure-requests;
 ">
+
 
 <!-- Favicon -->
 <link rel="icon" type="image/png" href="<?= $__base ?>Assets/images/logo.png" />

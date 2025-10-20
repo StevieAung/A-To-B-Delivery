@@ -177,82 +177,102 @@ $conn->close();
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-  const map = L.map('map').setView([16.8409, 96.1735], 13);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+  // =============================
+  // A To B Delivery – Live Tracking (Enhanced)
+  // =============================
+  const map = L.map("map").setView([16.8409, 96.1735], 13);
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map);
 
   let marker = null;
-  const statusDiv = document.getElementById('location-status');
+  const statusDiv = document.getElementById("location-status");
+  let lastSent = 0; // Timestamp for throttling API calls
 
-  // ===== Function to show colored alerts =====
+  // ===== Helper: Show colored Bootstrap alerts =====
   function showAlert(type, message) {
-    const color = {
-      success: "success",
-      warning: "warning",
-      error: "danger"
-    }[type] || "secondary";
-
+    const color = { success: "success", warning: "warning", error: "danger" }[type] || "secondary";
     statusDiv.innerHTML = `
-      <div class="alert alert-${color} py-2 mb-0 text-center fw-semibold">
+      <div class="alert alert-${color} py-2 mb-0 text-center fw-semibold small">
         ${message}
       </div>`;
   }
 
-  // ===== Function to update driver location =====
-  function updateLocation(lat, lon) {
-    // The fetch URL is correct as update_tracking.php is in the same directory
-    fetch('update_tracking.php', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: 'lat=' + encodeURIComponent(lat) + '&lon=' + encodeURIComponent(lon)
-    })
-    .then(r => r.json())
-    .then(data => {
+  // ===== Helper: Smooth marker movement =====
+  function moveMarker(lat, lon) {
+    const latlng = L.latLng(lat, lon);
+    if (marker) {
+      marker.setLatLng(latlng);
+    } else {
+      marker = L.marker(latlng).addTo(map).bindPopup("📍 You are here").openPopup();
+    }
+    map.setView(latlng, map.getZoom() < 13 ? 14 : map.getZoom(), { animate: true });
+  }
+
+  // ===== Function: Update driver location on server =====
+  async function updateLocation(lat, lon) {
+    try {
+      const now = Date.now();
+      if (now - lastSent < 3000) return; // limit updates to once every 3 seconds
+      lastSent = now;
+
+      const res = await fetch("update_tracking.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: `lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}`
+      });
+      const data = await res.json();
+
       if (data.success) {
-        showAlert("success", "Location updated successfully (" + lat.toFixed(4) + ", " + lon.toFixed(4) + ")");
+        showAlert("success", `✅ Updated: ${lat.toFixed(4)}, ${lon.toFixed(4)}`);
       } else {
-        // Use the server's message, or a default if none is provided
-        showAlert("warning", data.message || "Waiting for active delivery assignment…");
+        showAlert("warning", data.message || "⚙️ Waiting for active delivery assignment…");
       }
-    })
-    .catch(() => {
-      showAlert("error", "Error updating location. Check server connection.");
-    });
+    } catch (err) {
+      showAlert("error", "🚫 Error updating location. Check connection.");
+    }
   }
 
-  // ===== Real-time geolocation =====
+  // ===== Geolocation Watcher =====
   if ("geolocation" in navigator) {
-    navigator.geolocation.watchPosition(pos => {
-      const lat = pos.coords.latitude;
-      const lon = pos.coords.longitude;
+    showAlert("warning", "📡 Initializing location tracking...");
+    navigator.geolocation.watchPosition(
+      pos => {
+        const { latitude, longitude, accuracy } = pos.coords;
+        moveMarker(latitude, longitude);
+        updateLocation(latitude, longitude);
 
-      const latlng = new L.LatLng(lat, lon);
-      if (marker) {
-        marker.setLatLng(latlng);
-      } else {
-        marker = L.marker(latlng).addTo(map).bindPopup("You are here").openPopup();
-      }
-
-      map.setView(latlng, 14);
-      updateLocation(lat, lon);
-    }, err => {
-      showAlert("error", "Geolocation error: " + err.message);
-    }, { enableHighAccuracy: true, maximumAge: 10000, timeout: 15000 });
+        // Show live accuracy feedback
+        if (accuracy <= 50) {
+          showAlert("success", `📍 Accurate to ${Math.round(accuracy)} m`);
+        } else if (accuracy <= 500) {
+          showAlert("warning", `⚠️ Approx. location (±${Math.round(accuracy)} m)`);
+        } else {
+          showAlert("error", `❌ Low accuracy (±${Math.round(accuracy)} m). Move outdoors.`);
+        }
+      },
+      err => {
+        const errMsg = {
+          1: "🚫 Permission denied. Please allow location access.",
+          2: "📴 Location unavailable. Check GPS or Wi-Fi.",
+          3: "⏳ Location request timed out."
+        }[err.code] || "Unknown geolocation error.";
+        showAlert("error", errMsg);
+      },
+      { enableHighAccuracy: true, maximumAge: 0, timeout: 20000 }
+    );
   } else {
-    showAlert("error", "Geolocation not supported on this device.");
+    showAlert("error", "❌ Geolocation not supported on this device.");
   }
 
-  // ===== Initial state message =====
-  // This message will be replaced once the first location update is sent
-  showAlert("warning", "Initializing location tracking...");
-
-  // Simple controls
-  document.getElementById('btnCenterMe').addEventListener('click', () => {
-    if (marker) map.setView(marker.getLatLng(), 14);
+  // ===== UI Controls =====
+  document.getElementById("btnCenterMe")?.addEventListener("click", () => {
+    if (marker) map.setView(marker.getLatLng(), 15, { animate: true });
   });
-  document.getElementById('btnZoomIn').addEventListener('click', () => map.zoomIn());
-  document.getElementById('btnZoomOut').addEventListener('click', () => map.zoomOut());
+  document.getElementById("btnZoomIn")?.addEventListener("click", () => map.zoomIn());
+  document.getElementById("btnZoomOut")?.addEventListener("click", () => map.zoomOut());
+
+  // ===== Map Resize Fix =====
+  setTimeout(() => map.invalidateSize(), 400);
 });
 </script>
-
 </body>
 </html>

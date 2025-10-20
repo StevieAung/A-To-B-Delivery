@@ -196,8 +196,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 </div>
 <!-- Leaflet Routing Machine (CSS + JS) -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
-<script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+<!-- <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+<script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script> -->
 
 <script>
   // =============================
@@ -276,39 +276,60 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   }
 
   // ---------- Route Creation ----------
-  function createRoute() {
-    if (pickupMarker && dropMarker) {
-      if (routingControl) map.removeControl(routingControl);
-      routingControl = L.Routing.control({
-        waypoints: [pickupMarker.getLatLng(), dropMarker.getLatLng()],
-        routeWhileDragging: false,
-        lineOptions: { styles: [{ color: 'green', opacity: 0.8, weight: 6 }] },
-        createMarker: () => null
-      }).on('routesfound', e => {
-        let summary = e.routes[0].summary;
-        let distance = summary.totalDistance / 1000;
-        let time = Math.round(summary.totalTime / 60);
-        let price = distance * 1000;
+function createRoute() {
+  if (pickupMarker && dropMarker) {
+    if (routingControl) map.removeControl(routingControl);
 
-        document.getElementById('route_info').style.display = 'block';
-        document.getElementById('dist_val').innerText = `${distance.toFixed(2)} km`;
-        document.getElementById('time_val').innerText = `${time} mins`;
-        document.getElementById('price_val').innerText =
-          `${price.toLocaleString('en-US', { maximumFractionDigits: 0 })} Ks`;
-        document.getElementById('estimated_price').value = price.toFixed(2);
-        if (infoEl)
-          infoEl.textContent = `Route: ${distance.toFixed(2)} km • ETA: ${time} mins`;
+    const start = pickupMarker.getLatLng();
+    const end = dropMarker.getLatLng();
+    console.log('Creating route from', start, 'to', end);
 
-        const bounds = L.latLngBounds([
-          pickupMarker.getLatLng(),
-          dropMarker.getLatLng()
-        ]);
+    routingControl = L.Routing.control({
+      waypoints: [start, end],
+      router: L.Routing.osrmv1({
+        serviceUrl: "https://router.project-osrm.org/route/v1"
+      }),
+      routeWhileDragging: false,
+      lineOptions: { styles: [{ color: 'green', opacity: 0.8, weight: 6 }] },
+      createMarker: () => null
+    })
+    .on('routesfound', e => {
+      console.log('Route found:', e.routes);
+      if (!e.routes || !e.routes[0]) {
+        showAlert('warning', 'No route found.');
+        return;
+      }
+
+      const summary = e.routes[0].summary;
+      const distance = summary.totalDistance / 1000;
+      const time = Math.round(summary.totalTime / 60);
+      const price = distance * 1000;
+
+      document.getElementById('route_info').style.display = 'block';
+      document.getElementById('dist_val').innerText = `${distance.toFixed(2)} km`;
+      document.getElementById('time_val').innerText = `${time} mins`;
+      document.getElementById('price_val').innerText =
+        `${price.toLocaleString('en-US', { maximumFractionDigits: 0 })} Ks`;
+      document.getElementById('estimated_price').value = price.toFixed(2);
+
+      if (infoEl)
+        infoEl.textContent = `Route: ${distance.toFixed(2)} km • ETA: ${time} mins`;
+
+      setTimeout(() => {
+        const bounds = L.latLngBounds([start, end]);
         map.fitBounds(bounds.pad(0.2));
-      }).addTo(map);
-    } else {
-      fitToMarkers();
-    }
+      }, 500);
+    })
+    .on('routingerror', e => {
+      console.error('Routing error:', e);
+      showAlert('error', 'Could not create route. Check network or markers.');
+    })
+    .addTo(map);
+  } else {
+    console.warn('Missing pickup or drop marker');
+    fitToMarkers();
   }
+}
 
   // ---------- Fit map view ----------
   function fitToMarkers() {
